@@ -3,13 +3,14 @@ import subprocess
 
 def run_command(command):
     """
-    Runs a terminal command and prints the result.
+    Execute a shell command.
+
+    Args:
+        command (list): Command to execute.
     """
-    print(f"Running: {command}")
 
     result = subprocess.run(
         command,
-        shell=True,
         text=True,
         capture_output=True
     )
@@ -17,5 +18,4 @@ def run_command(command):
     if result.returncode == 0:
         print(result.stdout)
     else:
-        print("Error:")
         print(result.stderr)

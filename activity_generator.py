@@ -1,35 +1,48 @@
-from datetime import datetime
 import subprocess
-from config import FILE_TO_MODIFY, COMMIT_MESSAGE
+import argparse
+from datetime import datetime
+from config import FILE_TO_MODIFY
 
 
 def make_change():
-    """
-    Appends the current date and time to the activity file.
-    """
+    """Append a timestamp to the activity file."""
     with open(FILE_TO_MODIFY, "a") as file:
         file.write(f"Commit created at {datetime.now()}\n")
 
 
-def git_commit():
-    """
-    Adds and commits the changes.
-    """
-    subprocess.run("git add .", shell=True)
-    subprocess.run(
-        f'git commit -m "{COMMIT_MESSAGE}"',
-        shell=True
-    )
-
-
-def main():
-    print("Generating activity...")
+def create_commit(commit_date):
+    """Create a git commit using a custom date."""
 
     make_change()
 
-    git_commit()
+    subprocess.run("git add .", shell=True, check=True)
 
-    print("Done!")
+    command = (
+        f'git commit --date="{commit_date}" '
+        f'-m "Contribution on {commit_date}"'
+    )
+
+    subprocess.run(command, shell=True, check=True)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="GitHub Activity Generator"
+    )
+
+    parser.add_argument(
+        "--date",
+        required=True,
+        help="Commit date (YYYY-MM-DD)"
+    )
+
+    args = parser.parse_args()
+
+    commit_datetime = args.date + "T12:00:00"
+
+    create_commit(commit_datetime)
+
+    print("Commit created successfully!")
 
 
 if __name__ == "__main__":
