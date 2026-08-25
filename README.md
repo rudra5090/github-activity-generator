@@ -1,15 +1,21 @@
 # GitHub Activity Generator
 
-A small Python CLI that appends an activity entry and creates a Git commit for a supplied date.
+[![CI](https://github.com/rudra5090/github-activity-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/rudra5090/github-activity-generator/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-> This project is intended for learning Git, GitHub workflows, automation, and commit tooling. Do not use it to misrepresent professional activity or contributions.
+A small Python CLI for learning Git, GitHub workflows, automation, and commit tooling.
+
+> **Responsible use:** this project is for learning Git/GitHub automation. Do not use it to misrepresent professional activity, employment, or contributions.
 
 ## Features
 
 - Simple command-line interface
-- Date-based commit creation
+- Strict `YYYY-MM-DD` date validation
 - Configurable activity file
-- Git workflow automation with Python
+- Git workflow automation using Python's standard library
+- Automated tests with pytest
+- GitHub Actions CI on pushes and pull requests
 
 ## Requirements
 
@@ -24,15 +30,19 @@ cd github-activity-generator
 python -m pip install -r requirements.txt
 ```
 
-If you do not need the optional development dependencies, the script itself uses only Python's standard library.
-
 ## Usage
 
 ```bash
 python activity_generator.py --date 2026-08-25
 ```
 
-The command validates the date and then appends a timestamp to the configured activity file before creating a commit.
+Invalid dates are rejected before any commit operation begins.
+
+## Tests
+
+```bash
+python -m pytest -q
+```
 
 ## Project Structure
 
@@ -41,28 +51,32 @@ The command validates the date and then appends a timestamp to the configured ac
 ├── activity_generator.py
 ├── config.py
 ├── activity.txt
-├── requirements.txt
+├── tests/
+│   └── test_activity_generator.py
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   ├── pull_request_template.md
+│   └── workflows/ci.yml
+├── CONTRIBUTING.md
+├── LICENSE
 ├── README.md
-└── .gitignore
+└── requirements.txt
 ```
-
-## Configuration
-
-`config.py` contains the activity file path, default branch, and commit-related settings.
 
 ## Development Workflow
 
-1. Create an issue describing the change.
-2. Create a focused feature or fix branch.
+1. Open an issue describing a focused change.
+2. Create a feature or fix branch.
 3. Make the smallest useful change.
-4. Run tests or validation locally.
-5. Open a pull request and describe the change.
-6. Review the PR before merging.
+4. Run the test suite locally.
+5. Open a pull request using the PR template.
+6. Let CI verify the change.
+7. Review the PR before merging.
 
 ## Contributing
 
-Keep changes focused, use clear commit messages, and update documentation when behavior changes.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development and contribution guidelines.
 
 ## License
 
-This project is provided for educational and portfolio purposes.
+Released under the [MIT License](LICENSE).
