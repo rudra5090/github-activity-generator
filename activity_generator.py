@@ -1,48 +1,40 @@
-import subprocess
 import argparse
-from datetime import datetime
-from config import FILE_TO_MODIFY
+import subprocess
+from datetime import datetime, timezone
+from pathlib import Path
+
+from config import FILE_TO_MODIFY, COMMIT_MESSAGE
 
 
 def make_change():
-    """Append a timestamp to the activity file."""
-    with open(FILE_TO_MODIFY, "a") as file:
-        file.write(f"Commit created at {datetime.now()}\n")
+    """Append a real current-time UTC activity record."""
+    timestamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    path = Path(FILE_TO_MODIFY)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    with path.open("a", encoding="utf-8") as file:
+        file.write(f"Activity recorded at {timestamp}\\n")
+
+    return path
 
 
-def create_commit(commit_date):
-    """Create a git commit using a custom date."""
+def create_commit():
+    """Commit only the activity file using the current Git timestamp."""
+    activity_file = make_change()
 
-    make_change()
-
-    subprocess.run("git add .", shell=True, check=True)
-
-    command = (
-        f'git commit --date="{commit_date}" '
-        f'-m "Contribution on {commit_date}"'
-    )
-
-    subprocess.run(command, shell=True, check=True)
+    subprocess.run(["git", "add", "--", str(activity_file)], check=True)
+    message = f"{COMMIT_MESSAGE} ({datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')})"
+    subprocess.run(["git", "commit", "-m", message], check=True)
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="GitHub Activity Generator"
+        description="Record and commit genuine GitHub activity using the current date."
     )
+    parser.parse_args()
 
-    parser.add_argument(
-        "--date",
-        required=True,
-        help="Commit date (YYYY-MM-DD)"
-    )
-
-    args = parser.parse_args()
-
-    commit_datetime = args.date + "T12:00:00"
-
-    create_commit(commit_datetime)
-
-    print("Commit created successfully!")
+    create_commit()
+    print("Current activity recorded and committed successfully.")
 
 
 if __name__ == "__main__":
