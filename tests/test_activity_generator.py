@@ -1,5 +1,6 @@
 import tempfile
 import unittest
+from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
 
@@ -42,6 +43,24 @@ class ActivityGeneratorTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "COMMIT_MESSAGE"):
                     activity_generator.create_commit()
                 change_mock.assert_not_called()
+
+    def test_dry_run_prints_preview_without_side_effects(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            target = Path(temp_dir) / "activity.txt"
+            output = StringIO()
+            with patch.object(activity_generator, "FILE_TO_MODIFY", str(target)), \
+                 patch.object(activity_generator.subprocess, "run") as run_mock, \
+                 patch("sys.stdout", output):
+                activity_generator.dry_run()
+
+            self.assertFalse(target.exists())
+            run_mock.assert_not_called()
+            text = output.getvalue()
+            self.assertIn("DRY RUN", text)
+            self.assertIn(str(target), text)
+            self.assertIn("Would append: Activity recorded at ", text)
+            self.assertIn("git add --", text)
+            self.assertIn("git commit -m", text)
 
 
 if __name__ == "__main__":
