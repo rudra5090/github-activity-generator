@@ -16,12 +16,16 @@ A small Python utility that records a genuine activity entry with the current UT
    git config user.name "Your Name"
    git config user.email "you@example.com"
    ```
-3. Run the script:
+3. Preview the operation without changing anything:
+   ```bash
+   python activity_generator.py --dry-run
+   ```
+4. If the preview is correct, run it:
    ```bash
    python activity_generator.py
    ```
 
-The script appends a UTC timestamp to the file configured in `config.py`, stages that file only, and creates a commit using the current date/time. Review the change before pushing.
+The script appends a UTC timestamp to the file configured in `config.py`, stages that file only, and creates a commit using the current date/time. Review the change before pushing. The dry-run mode displays the target file, proposed record, and Git commands without creating files or executing Git.
 
 ## Run tests
 
