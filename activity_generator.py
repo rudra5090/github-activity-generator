@@ -44,7 +44,7 @@ def make_change():
     path = _validated_activity_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as file:
-        file.write(f"Activity recorded at {timestamp}\\n")
+        file.write(f"Activity recorded at {timestamp}\n")
     return path
 
 
