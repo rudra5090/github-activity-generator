@@ -5,8 +5,9 @@ A small Python utility that records a genuine activity entry with the current UT
 ## Requirements
 
 - Python 3.8+
-- Git installed and configured with your name and email
-- Run this script inside a Git repository
+- Git installed and available on PATH
+- Run the script from inside a Git working tree
+- Git user name and email configured
 
 ## Usage
 
@@ -25,7 +26,9 @@ A small Python utility that records a genuine activity entry with the current UT
    python activity_generator.py
    ```
 
-The script appends a UTC timestamp to the file configured in `config.py`, stages that file only, and creates a commit using the current date/time. Review the change before pushing. The dry-run mode displays the target file, proposed record, and Git commands without creating files or executing Git.
+Before appending an activity record, the script checks that it is running inside a Git working tree. If Git is missing or the current directory is not a repository, it stops without modifying the activity file. It then stages only the configured file and creates a commit using the current date/time.
+
+The dry-run mode displays the target file, proposed record, and Git commands without creating files or executing Git.
 
 ## Run tests
 
@@ -39,6 +42,6 @@ Tests use temporary files and mocked Git commands. They do not create commits in
 
 ## Configuration
 
-Edit `config.py` to set `FILE_TO_MODIFY` and `COMMIT_MESSAGE`.
+Edit `config.py` to set `FILE_TO_MODIFY` and `COMMIT_MESSAGE`. The activity path must be a non-empty file path, not an existing directory.
 
 Use this tool only for real, transparent project activity; do not use it to fabricate or backdate contributions.
