@@ -30,6 +30,8 @@ Before appending an activity record, the script checks that it is running inside
 
 The dry-run mode displays the target file, proposed record, and Git commands without creating files or executing Git.
 
+If validation or a Git command fails, the command now prints a concise error with a non-zero exit status instead of an unhandled Python traceback. For a failed Git commit, inspect `git status` before retrying.
+
 ## Run tests
 
 The project uses Python's built-in `unittest` framework, so no extra test dependency is required:
