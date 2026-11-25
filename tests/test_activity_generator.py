@@ -82,6 +82,30 @@ class ActivityGeneratorTests(unittest.TestCase):
             self.assertIn("git add --", output_text)
             self.assertIn("git commit -m", output_text)
 
+    def test_main_shows_runtime_errors_without_traceback(self):
+        output = StringIO()
+        with patch("sys.argv", ["activity_generator.py"]):
+            with patch.object(activity_generator, "create_commit",
+                              side_effect=RuntimeError("Git repository not found")):
+                with patch("sys.stderr", output):
+                    with self.assertRaises(SystemExit) as raised:
+                        activity_generator.main()
+        self.assertEqual(raised.exception.code, 2)
+        self.assertIn("error: Git repository not found", output.getvalue())
+        self.assertNotIn("Traceback", output.getvalue())
+
+    def test_main_explains_git_commit_failure(self):
+        output = StringIO()
+        failure = subprocess.CalledProcessError(1, ["git", "commit", "-m", "message"])
+        with patch("sys.argv", ["activity_generator.py"]):
+            with patch.object(activity_generator, "create_commit", side_effect=failure):
+                with patch("sys.stderr", output):
+                    with self.assertRaises(SystemExit) as raised:
+                        activity_generator.main()
+        self.assertEqual(raised.exception.code, 2)
+        self.assertIn("Git command failed with exit code 1", output.getvalue())
+        self.assertIn("git commit -m message", output.getvalue())
+
 
 if __name__ == "__main__":
     unittest.main()
