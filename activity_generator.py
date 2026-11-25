@@ -86,10 +86,19 @@ def main():
         help="Preview the activity and Git commands without changing anything.",
     )
     args = parser.parse_args()
-    if args.dry_run:
-        dry_run()
-        return
-    create_commit()
+    try:
+        if args.dry_run:
+            dry_run()
+            return
+        create_commit()
+    except (ValueError, RuntimeError) as exc:
+        parser.error(str(exc))
+    except subprocess.CalledProcessError as exc:
+        command = " ".join(str(part) for part in exc.cmd)
+        parser.error(
+            f"Git command failed with exit code {exc.returncode}: {command}. "
+            "Check your Git status and configuration."
+        )
     print("Current activity recorded and committed successfully.")
 
 
